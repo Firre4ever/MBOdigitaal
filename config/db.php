@@ -42,4 +42,3 @@ $password = "Vrieskist@247";        // Wachtwoord van de gebruiker.
   * $user = getenv('USER');
   * $password = getenv('PASSWORD');
   */
-ggweg eg 
