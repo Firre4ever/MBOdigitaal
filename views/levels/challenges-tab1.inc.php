@@ -1,228 +1,480 @@
+
+<?php
+
+require_once $_SERVER["DOCUMENT_ROOT"] . '/docroot.php';
+
+require_once __DOCUMENTROOT__ . '/config/db.php';
+
+
+
+
+if (!isset($db)) {
+
+    try {
+
+        $dsn = "mysql:host=$host;dbname=$dbName;charset=UTF8";
+
+        $db = new PDO($dsn, $user, $password);
+
+        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    } catch (PDOException $e) {
+
+        die("Databaseverbinding mislukt: " . $e->getMessage());
+
+    }
+
+}
+
+
+
+
+// Query om alle levels op te halen
+
+$query = "SELECT * FROM levels";
+
+$stmt = $db->query($query);
+
+
+
+
+// Sla de levels op in een array
+
+$levels = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
+
+
+?>
+
+
+
+
 <!DOCTYPE html>
-<html lang="en">
+
+<html lang="nl">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Excel Data Display</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f4f9;
-        }
-        .level {
-            margin-bottom: 20px;
-            background-color: #fff;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        .level h2 {
-            cursor: pointer;
-            font-size: 18px;
-            padding: 12px 15px;
-            margin: 0;
-            background-color: #f8f8f8;
-            border-bottom: 1px solid #ddd;
-        }
-        .level-content {
-            display: none;
-            padding: 15px;
-        }
-        .level-content.active {
-            display: block;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-            background-color: #fff;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        table th, table td {
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
-        table th {
-            background-color: #f8f8f8;
-            font-weight: bold;
-        }
-        table tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-        }
-    </style>
+
+    <?php require '../views/templates/head.php'; ?>
+
+    <link rel="stylesheet" href="../../views/levels/challenges-tab1.inc.css">
+
+    <title>Levels</title>
+
 </head>
+
 <body>
 
-    <h1>Excel Data Display</h1>
+<style>
 
-    <div class="level" id="level1">
-        <h2 onclick="toggleLevel('level1')">Level 1: Realiseert Software</h2>
-        <div class="level-content">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nog geen level</th>
-                        <th>Level 1</th>
-                        <th>Level 2</th>
-                        <th>Level 3</th>
-                        <th>Level 4</th>
-                        <th>Level 5</th>
-                        <th>Level 6</th>
-                        <th>Level 7</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1: Realiseert Software</td>
-                        <td>"Student heeft XAMMP/alternatief werkend geïnstalleerd. Code gepresenteerd met VS Code."</td>
-                        <td>"Kan 5 HTML tags uitleggen. 5 CSS onderwerpen behandeld."</td>
-                        <td>"Student kan een database maken en nette code schrijven in JavaScript, HTML, CSS & PHP."</td>
-                        <td>"Kan ERD, Functioneel/Technisch ontwerp en de basisprincipes van OOP uitleggen."</td>
-                        <td>"Presenteert software in een tweede programmeertaal en legt een debugstrategie uit."</td>
-                        <td>"Verdiepende challenge in tweede programmeertaal."</td>
-                        <td>"Laat afgeronde challenges zien met opdrachtdefinitie, ontwerpdocument, testplan en verbeter voorstellen."</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+body {
+
+font-family: 'Arial', sans-serif;
+
+background-color: #f0f4f8;
+
+margin: 0;
+
+padding: 20px;
+
+color: #333;
+
+}
+
+
+
+
+h1 {
+
+text-align: center;
+
+margin-bottom: 30px;
+
+color: #2d89e5;
+
+}
+
+
+
+
+.view-all-container {
+
+text-align: center;
+
+margin-bottom: 30px;
+
+}
+
+
+
+
+.view-all-btn {
+
+background-color: #2d89e5;
+
+color: white;
+
+border: none;
+
+border-radius: 5px;
+
+padding: 12px 24px;
+
+cursor: pointer;
+
+font-size: 16px;
+
+display: flex;
+
+align-items: center;
+
+justify-content: center;
+
+transition: background-color 0.3s ease;
+
+}
+
+
+
+
+.view-all-btn:hover {
+
+background-color: #2166b3;
+
+}
+
+
+
+
+.view-all-btn img {
+
+margin-right: 8px;
+
+width: 20px;
+
+height: 20px;
+
+}
+
+
+
+
+.tile-container {
+
+display: flex;
+
+flex-wrap: wrap;
+
+justify-content: center;
+
+gap: 20px;
+
+}
+
+
+
+
+.tile {
+
+background-color: #fff;
+
+border-radius: 10px;
+
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+padding: 20px;
+
+width: 300px;
+
+text-align: center;
+
+cursor: pointer;
+
+transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+overflow: hidden;
+
+}
+
+
+
+
+.tile:hover {
+
+transform: translateY(-5px);
+
+box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+
+}
+
+
+
+
+.tile img {
+
+width: 80px;
+
+height: 80px;
+
+margin-bottom: 15px;
+
+}
+
+
+
+
+.tile h2 {
+
+font-size: 22px;
+
+margin: 0 0 10px;
+
+color: #2d89e5;
+
+}
+
+
+
+
+.tile .description {
+
+font-size: 16px;
+
+margin: 10px 0;
+
+color: #555;
+
+}
+
+
+
+
+.tile .more-info {
+
+display: none;
+
+padding-top: 15px;
+
+font-size: 14px;
+
+color: #444;
+
+text-align: left;
+
+border-top: 1px solid #ddd;
+
+}
+
+
+
+
+.tile.open .more-info {
+
+display: block;
+
+}
+
+
+
+
+.more-info h3 {
+
+margin: 10px 0 5px;
+
+font-size: 16px;
+
+color: #2d89e5;
+
+}
+
+
+
+
+.more-info p {
+
+margin: 0;
+
+color: #666;
+
+}
+
+
+
+
+@media (max-width: 768px) {
+
+.tile {
+
+    width: 100%;
+
+    max-width: 500px;
+
+}
+
+}
+
+
+
+</style>
+
+
+
+
+
+<br><br><br>
+
+<div>
+
+    <h1>LEVELS</h1>
+
+
+
+
+    <div class="view-all-container">
+
+        <button class="view-all-btn" onclick="toggleAllInfo()">
+
+            <img src="https://img.icons8.com/ios-filled/50/ffffff/visible.png" alt="View All">
+
+            Bekijk Alles
+
+        </button>
+
     </div>
 
-    <div class="level" id="level2">
-        <h2 onclick="toggleLevel('level2')">Level 2: Werken in een ontwikkelteam</h2>
-        <div class="level-content">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nog geen level</th>
-                        <th>Level 1</th>
-                        <th>Level 2</th>
-                        <th>Level 3</th>
-                        <th>Level 4</th>
-                        <th>Level 5</th>
-                        <th>Level 6</th>
-                        <th>Level 7</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>2: Werken in een ontwikkelteam</td>
-                        <td>"Student voert een project uit in een groep en lost conflicten op."</td>
-                        <td>"Samenwerken in een groepje en weet wat hun rol is."</td>
-                        <td>"Reflecteert op eigen rol binnen het team via Belbin test."</td>
-                        <td>"Toont aan dat ze feedback kunnen geven en plant werkzaamheden."</td>
-                        <td>"Reflecteert volgens STARR-methode op rol binnen het team."</td>
-                        <td>"360-graden feedback en presenteert de challenge op een professionele manier."</td>
-                        <td>"Actieve deelname aan team, professionele presentatie, reflectie op rol en gedrag."</td>
-                    </tr>
-                </tbody>
-            </table>
+
+
+
+    <div class="tile-container">
+
+        <?php if (!empty($levels)): ?>
+
+            <?php foreach ($levels as $level): ?>
+
+    <div class="tile" onclick="toggleInfo(this)">
+
+        <img src="https://via.placeholder.com/100" alt="Icoon">
+
+        <h2>
+
+            <?= isset($level['title']) ? htmlspecialchars($level['title']) : 'Geen titel beschikbaar'; ?>
+
+        </h2>
+
+        <p class="description">
+
+            <?= isset($level['description']) ? htmlspecialchars($level['description']) : 'Geen beschrijving beschikbaar'; ?>
+
+        </p>
+
+
+
+
+        <!-- Haal de details van dit level op -->
+
+        <?php
+
+        $stmt_details = $db->prepare("SELECT * FROM level_details WHERE level_id = ?");
+
+        $stmt_details->execute([$level['id']]);
+
+        $details = $stmt_details->fetchAll(PDO::FETCH_ASSOC);
+
+        ?>
+
+        
+
+        <div class="more-info">
+
+            <?php foreach ($details as $detail): ?>
+
+                <h3><?= htmlspecialchars($detail['category']); ?></h3>
+
+                <p><?= htmlspecialchars($detail['detail']); ?></p>
+
+            <?php endforeach; ?>
+
         </div>
+
     </div>
 
-    <!-- Additional Levels -->
+<?php endforeach; ?>
 
-    <div class="level" id="level3">
-        <h2 onclick="toggleLevel('level3')">Level 3: Generieke onderdelen RE</h2>
-        <div class="level-content">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nog geen level</th>
-                        <th>Level 1</th>
-                        <th>Level 2</th>
-                        <th>Level 3</th>
-                        <th>Level 4</th>
-                        <th>Level 5</th>
-                        <th>Level 6</th>
-                        <th>Level 7</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>3: Generieke onderdelen RE</td>
-                        <td colspan="7">Rekenlicentie aangeschaft & H1-6, H7-13, H14-18</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+
+
+
+        <?php else: ?>
+
+            <p>Er zijn geen levels gevonden.</p>
+
+        <?php endif; ?>
+
     </div>
 
-    <div class="level" id="level4">
-        <h2 onclick="toggleLevel('level4')">Level 4: Generieke onderdelen BS</h2>
-        <div class="level-content">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nog geen level</th>
-                        <th>Level 1</th>
-                        <th>Level 2</th>
-                        <th>Level 3</th>
-                        <th>Level 4</th>
-                        <th>Level 5</th>
-                        <th>Level 6</th>
-                        <th>Level 7</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>4: Generieke onderdelen BS</td>
-                        <td>"Heeft zich verdiept in de dimensie Sociaal Maatschappelijk."</td>
-                        <td>"Verdiept in de dimensie gezondheid en beroepsziekten."</td>
-                        <td>"Verdiept in de dimensie politiek en het Nederlandse kiessysteem."</td>
-                        <td>"Verdiept in economie en de kosten van studenten in Nederland."</td>
-                        <td>"Interview met stagebegeleider over hoe de vier dimensies een plek krijgen in de organisatie."</td>
-                        <td>"Neemt burgerschapsdimensies op in challenges."</td>
-                        <td>"Burgerschap"</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
 
-    <div class="level" id="level5">
-        <h2 onclick="toggleLevel('level5')">Level 5: Generieke onderdelen Nederlands</h2>
-        <div class="level-content">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nog geen level</th>
-                        <th>Level 1</th>
-                        <th>Level 2</th>
-                        <th>Level 3</th>
-                        <th>Level 4</th>
-                        <th>Level 5</th>
-                        <th>Level 6</th>
-                        <th>Level 7</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>5:Generieke onderdelen Nederlands</td>
-                        <td>"Student heeft drie verschillende "Nederlands-Bricks" succesvol voltooid." </td>
-                        <td>"Student heeft een presentatie-opdracht op 3F-niveau voltooid."</td>
-                        <td>"Student heeft een schrijfopdracht op 3F-niveau voltooid."</td>
-                        <td>Student heeft een presentatie-opdracht op 3F-niveau voltooid.</td>
-                        <td>"Student heeft een schrijfopdracht op 3F-niveau voltooid."</td>
-                        <td>"Student heeft een oefenexamen Lezen/Luisteren op 3F-niveau voltooid."</td>
-                        <td>"Student heeft alle examens voor Nederlands behaald."</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <!-- Add more levels as needed -->
+
+
+    <br><br><br>
+
+
+
 
     <script>
-        function toggleLevel(levelId) {
-            var content = document.getElementById(levelId).getElementsByClassName('level-content')[0];
-            content.classList.toggle('active');
+
+        function toggleInfo(tile) {
+
+            tile.classList.toggle("open");
+
         }
+
+
+
+
+        function toggleAllInfo() {
+
+            const tiles = document.querySelectorAll('.tile');
+
+            const allOpen = [...tiles].every(tile => tile.classList.contains('open'));
+
+
+
+
+            tiles.forEach(tile => {
+
+                if (allOpen) {
+
+                    tile.classList.remove('open');
+
+                } else {
+
+                    tile.classList.add('open');
+
+                }
+
+            });
+
+        }
+
     </script>
 
+</div>
+
+
+
+
+
+
+
+
 </body>
+
 </html>
+
+
+
+
