@@ -76,7 +76,7 @@ body {
 
 font-family: 'Arial', sans-serif;
 
-background-color: #f0f4f8;
+background-color: lightblue;
 
 margin: 0;
 
@@ -95,7 +95,7 @@ text-align: center;
 
 margin-bottom: 30px;
 
-color: #2d89e5;
+color: black;
 
 }
 
@@ -234,7 +234,7 @@ font-size: 22px;
 
 margin: 0 0 10px;
 
-color: #2d89e5;
+color: black;
 
 }
 
@@ -247,7 +247,7 @@ font-size: 16px;
 
 margin: 10px 0;
 
-color: #555;
+color: black;
 
 }
 
@@ -262,7 +262,7 @@ padding-top: 15px;
 
 font-size: 14px;
 
-color: #444;
+color: lightblue;
 
 text-align: left;
 
@@ -288,7 +288,7 @@ margin: 10px 0 5px;
 
 font-size: 16px;
 
-color: #2d89e5;
+color: black;
 
 }
 
