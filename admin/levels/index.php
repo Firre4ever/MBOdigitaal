@@ -516,24 +516,6 @@ $levels = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
 
-
-
-
-<div class="view-all-container">
-
-    <button class="view-all-btn" onclick="toggleAllInfo()">
-
-        <img src="https://img.icons8.com/ios-filled/50/ffffff/visible.png" alt="View All">
-
-        Bekijk Alles
-
-    </button>
-
-</div>
-
-
-
-
 <div class="tile-container">
 
     <?php if (!empty($levels)): ?>

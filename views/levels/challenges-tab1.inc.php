@@ -234,7 +234,7 @@ font-size: 22px;
 
 margin: 0 0 10px;
 
-color: black;
+color: blue;
 
 }
 
@@ -288,7 +288,7 @@ margin: 10px 0 5px;
 
 font-size: 16px;
 
-color: black;
+color: blue;
 
 }
 
@@ -330,7 +330,7 @@ color: #666;
 
 <div>
 
-    <h1>LEVELS</h1>
+    
 
 
 
@@ -358,7 +358,7 @@ color: #666;
 
     <div class="tile" onclick="toggleInfo(this)">
 
-        <img src="https://via.placeholder.com/100" alt="Icoon">
+        
 
         <h2>
 
